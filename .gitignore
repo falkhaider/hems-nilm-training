@@ -44,3 +44,5 @@ data/
 outputs/
 out/
 tools/
+artifacts/mgru_ofat_s2p
+artifacts/mgru_ofat_s2s_mo
