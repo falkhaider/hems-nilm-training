@@ -1,0 +1,46 @@
+# === Python: Bytecode & Caches ===
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.ipynb_checkpoints/
+
+# === Virtual Environments ===
+.venv/
+venv/
+env/
+
+# === Build/Distribution Artefakte ===
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# === Logs & temporäre Dateien ===
+*.log
+*.tmp
+*.bak
+
+# === Konfiguration/Secrets (lokal) ===
+.env
+.env.*
+!.env.example
+.data_edit.py
+
+# === IDE/Editor (benutzerspezifisch) ===
+.vscode/
+.idea/
+*.code-workspace
+
+# === Betriebssystem-Artefakte ===
+Thumbs.db
+Desktop.ini
+
+# === Projektordner, die nicht versioniert werden sollen (falls genutzt) ===
+data/
+outputs/
+out/
+tools/

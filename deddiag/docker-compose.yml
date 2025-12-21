@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  deddiagdb:
+    image: postgres:15
+    container_name: deddiagdb
+    restart: unless-stopped
+
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+    volumes:
+      - deddiag_pgdata:/var/lib/postgresql/data
+      - C:\deddiag:/dataset
+
+volumes:
+  deddiag_pgdata:

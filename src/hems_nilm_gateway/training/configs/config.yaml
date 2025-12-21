@@ -1,0 +1,69 @@
+seed: 42                                     # Zufallsstartwert
+
+dataset:
+  # Quelle der Trainingsdaten: "deddiag" oder "csv"
+  source: "csv"
+
+  # Ein-Schwelle
+  on_w: 10.0                                # Schwelle, ab der ein Gerät als "an" gilt
+
+  # DEDDIAG-Konfiguration (PostgreSQL)
+  deddiag:
+    schema: "public"             
+    db:
+      host: "127.0.0.1"                     # DB-Host
+      port: 5432                            # DB-Port
+      dbname: "postgres"                    # Datenbankname
+      user: "postgres"                      # DB-Benutzer
+      password: "password"                  # DB-Passwort
+
+    # Zeitraum der Daten (Train/Val/Test werden zeitlich daraus gesplittet: 70/15/15)
+    start: "2017-10-23T12:00:00"            # Startzeitpunkt
+    end:   "2017-12-23T12:00:00"            # Endzeitpunkt
+
+    mains_item_id: 59                       # ID der Hauptleistung - Mains (Modelleingang)
+    target_item_ids: [24, 26, 35]           # Gerätekandidaten (Heads): Waschmaschine, Geschirrspueler, Kuehlschrank
+
+  # CSV-Konfiguration (Zielhaushalt)
+  csv:
+    path: "data/daten_nov_resample.csv"   
+
+    # Spaltennamen in der CSV
+    timestamp_col: "timestamp"              # Zeitstempel-Spalte
+    mains_col: "phase_sum"                  # Gesamtleistung (Eingang des Modells)
+    device_cols:                            # Gerätespalten (Heads)
+      - "spuelmaschine"
+      - "kuehlschrank"
+      - "backofen"
+
+    # CSV-Format
+    sep: ";"                                # Spaltentrenner
+    decimal: ","                            # Dezimaltrennzeichen
+
+    # Optional: Zeitraum der CSV-Daten
+    start: "2025-11-07T11:00:00"
+    end:   "2025-11-27T10:00:00"
+
+# --- Fenster ---
+window: 960                                 # Fensterlänge in Sekunden
+stride: 2                                   # Schrittweite in Sekunden
+
+# --- Modell ---
+model:
+  hidden: 128                               # Größe des GRU-Hidden-States
+  layers: 4                                 # Anzahl GRU-Schichten
+  dropout: 0.0                              # Dropout zwischen GRU-Schichten
+
+# --- Training ---
+train:
+  batch_size: 128                           # Fenster pro Optimizer-Update
+  lr: 0.001                                 # Lernrate (AdamW)
+  epochs: 10                                # Maximale Epochen
+  patience: 5                               # Early Stopping (Epochen ohne Val-Verbesserung)
+  amp: true                                 # Automatic Mixed Precision
+  require_cuda: true                        # GPU
+
+# --- Artefakte ---
+artifacts:
+  out_dir: "artifacts/mgru"               # Ordner für gespeicherte Ergebnisse
+  artifact_prefix: "ID"                   # Präfix (Kennzeichnung Versuchsreihe)

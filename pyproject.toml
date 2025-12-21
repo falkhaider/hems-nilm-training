@@ -1,0 +1,78 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hems-nilm-training"
+version = "0.1.0"
+description = "Training-Code für das Seq2Seq M-GRU NILM-Modell."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Falk Haider" }]
+license = { text = "UNLICENSED" }
+keywords = ["NILM", "HEMS", "GRU", "Seq2Seq", "PyTorch", "DEDDIAG"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+  "Topic :: Scientific/Engineering :: Artificial Intelligenc (AI)",
+]
+
+dependencies = [
+  "numpy>=1.24",
+  "pandas>=2.0",
+  "torch>=2.1",
+  "PyYAML>=6.0",
+  "matplotlib>=3.7",
+]
+
+[project.optional-dependencies]
+deddiag = [
+  "psycopg[binary]>=3.1",
+]
+
+tools = [
+  "streamlit>=1.32",
+  "plotly>=5.18",
+]
+
+dev = [
+  "pytest>=7.4",
+  "ruff>=0.6",
+  "black>=24.0",
+]
+
+[project.scripts]
+train-mgru = "hems_nilm_gateway.training.train_mgru:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["hems_nilm_gateway*"]
+
+[tool.setuptools.package-data]
+hems_nilm_gateway = [
+  "training/configs/*.yaml",
+  "training/configs/**/*.yaml",
+]
+
+[tool.black]
+line-length = 100
+target-version = ["py310", "py311"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+exclude = [
+  ".venv",
+  "artifacts",
+  "data",
+  "deddiag",
+  "out",
+  "hems_nilm_gateway.egg-info",
+  "UNKNOWN.egg-info",
+]
+lint.select = ["E", "F", "I", "B", "UP"]
+lint.ignore = ["E501"]

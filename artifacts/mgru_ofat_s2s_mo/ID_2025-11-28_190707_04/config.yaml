@@ -1,0 +1,75 @@
+# --- Reproduzierbarkeit ---
+seed: 42                       # Zufallsstartwert (macht Splits/Init reproduzierbar)
+
+dataset:
+  # Quelle der Trainingsdaten: "deddiag" (PostgreSQL / DEDDIAG) oder "csv" (Haushalt Bruder)
+  source: "csv"            # zum Umschalten einfach auf "csv" Ã¤ndern
+
+  # Gemeinsame Label-Schwelle (gilt fÃ¼r beide Quellen)
+  on_w: 10.0                   # Watt-Schwelle, ab der ein GerÃ¤t als "an" gilt
+
+  # ------------------------------
+  # DEDDIAG-Konfiguration (PostgreSQL)
+  # ------------------------------
+  deddiag:
+    schema: "public"             # PostgreSQL-Schema mit den DEDDIAG-Funktionen/Tabellen
+    db:
+      host: "127.0.0.1"          # DB-Host (z. B. IP oder Hostname)
+      port: 5432                 # DB-Port
+      dbname: "postgres"         # Datenbankname
+      user: "postgres"           # DB-Benutzer
+      password: "password"       # DB-Passwort
+
+    # Zeitraum der Daten (Train/Val/Test werden zeitlich daraus gesplittet: 70/15/15)
+    start: "2017-10-23T12:00:00" # Startzeitpunkt
+    end:   "2017-12-23T12:00:00" # Endzeitpunkt
+
+    mains_item_id: 59             # ID der Hauptleistung - Mains (Modelleingang)
+    target_item_ids: [24, 26, 35] # GerÃ¤tekandidaten (Labels/Heads): Waschmaschine, GeschirrspÃ¼ler, KÃ¼hlschrank
+
+  # ------------------------------
+  # CSV-Konfiguration (Haushalt Bruder)
+  # ------------------------------
+  csv:
+    path: "data/daten_nov_resample.csv"   # Pfad zu deiner CSV-Datei
+
+    # Spaltennamen in der CSV
+    timestamp_col: "timestamp"           # Zeitstempel-Spalte
+    mains_col: "phase_sum"               # Gesamtleistung (Eingang des Modells)
+    device_cols:                         # GerÃ¤tespalten (Labels/Heads)
+      - "spuelmaschine"
+      - "kuehlschrank"
+      - "backofen"
+
+    # CSV-Format (wie in deinem Beispiel)
+    sep: ";"                             # Spaltentrenner
+    decimal: ","                         # Dezimaltrennzeichen
+
+    # Optional: Zeitraum der CSV-Daten, die fÃ¼r das Training verwendet werden sollen
+    # (falls weggelassen, wird der komplette CSV-Zeitraum genutzt)
+    start: "2025-11-07T11:00:00"         # z. B. Startzeitpunkt (ISO-Format)
+    end:   "2025-11-27T10:00:00"         # z. B. Endzeitpunkt (exklusiv)
+
+# --- Fenster ---
+window: 960                      # FensterlÃ¤nge in Sekunden (Seq2Seq)
+stride: 30                       # Schrittweite in Sekunden (kleiner => mehr Trainingsbeispiele)
+
+# --- Modell ---
+model:
+  hidden: 64                    # GrÃ¶ÃŸe des GRU-Hidden-States (KapazitÃ¤t des Modells)
+  layers: 1                      # Anzahl GRU-Schichten (Tiefe; >1 kann komplexere Muster lernen)
+  dropout: 0.0                   # Dropout (Regularisierung) zwischen GRU-Schichten (nur wirksam bei layers > 1)
+
+# --- Training ---
+train:
+  batch_size: 128                # Fenster pro Optimizer-Update (grÃ¶ÃŸer => schneller, aber mehr VRAM)
+  lr: 0.0005                     # Lernrate (AdamW)
+  epochs: 16                     # Maximale Epochen (Early Stopping kann frÃ¼her abbrechen)
+  patience: 6                    # Early Stopping (Epochen ohne Val-Verbesserung)
+  amp: true                      # Automatic Mixed Precision (schneller, weniger VRAM auf GPU)
+  require_cuda: true             # GPU Nutzung erzwingen
+
+# --- Artefakte ---
+artifacts:
+  out_dir: "artifacts/mgru_ofat_s2s_mo"   # Basisordner fÃ¼r gespeicherte Ergebnisse/Modelle
+  artifact_prefix: "ID"               # PrÃ¤fix (Kennzeichnung Versuchsreihe)
