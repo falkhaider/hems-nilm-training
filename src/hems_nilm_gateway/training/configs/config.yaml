@@ -15,7 +15,7 @@ dataset:
       port: 5432                            # DB-Port
       dbname: "postgres"                    # Datenbankname
       user: "postgres"                      # DB-Benutzer
-      password: "password"                  # DB-Passwort
+      password: "*******"                  # DB-Passwort
 
     # Zeitraum der Daten (Train/Val/Test werden zeitlich daraus gesplittet: 70/15/15)
     start: "2017-10-23T12:00:00"            # Startzeitpunkt
