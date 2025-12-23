@@ -24,22 +24,22 @@ dist/
 *.tmp
 *.bak
 
-# === Konfiguration/Secrets (lokal) ===
+# === Konfiguration/Secrets ===
 .env
 .env.*
 !.env.example
 .data_edit.py
 
-# === IDE/Editor (benutzerspezifisch) ===
+# === IDE/Editor ===
 .vscode/
 .idea/
 *.code-workspace
 
-# === Betriebssystem-Artefakte ===
+# === Betriebssystem ===
 Thumbs.db
 Desktop.ini
 
-# === Projektordner, die nicht versioniert werden sollen (falls genutzt) ===
+# === Projektordner ===
 data/
 outputs/
 out/
